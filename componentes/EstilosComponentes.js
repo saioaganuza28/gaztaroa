@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native';
+import { colorGaztaroaOscuro } from '../comun/comun';
 
 const styles = StyleSheet.create({
     container: {
@@ -11,20 +12,31 @@ const styles = StyleSheet.create({
         resizeMode: 'cover',
     },
     text: {
-        fontSize: 30,
+        fontSize: 50,
         fontWeight: 'bold',
         textAlign: 'center',
+        marginTop: 40,
         color: 'chocolate',
     },
 });
 export default styles;
+
+export const textoDetalleExcursion = StyleSheet.create({
+    text: {
+        fontSize: 50,
+        fontWeight: 'bold',
+        textAlign: 'center',
+        marginTop: 40,
+        color: 'white',
+    },
+});
 
 export const stylesCampoBase = StyleSheet.create({
     container: {
         flex: 1,
     },
     drawerHeader: {
-        backgroundColor: '#015afc',
+        backgroundColor: colorGaztaroaOscuro,
         height: 100,
         alignItems: 'center',
         justifyContent: 'center',
