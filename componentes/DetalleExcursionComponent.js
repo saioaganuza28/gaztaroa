@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
-import { EXCURSIONES } from '../comun/excursiones';
 import styles from './EstilosComponentes';
 import { Text, View, ScrollView } from 'react-native';
-import { COMENTARIOS } from '../comun/comentarios';
 import { Card, Icon } from '@rneui/themed';
 import { ListItem } from '@rneui/themed';
 import { baseUrl } from '../comun/comun';
 import { textoDetalleExcursion } from './EstilosComponentes';
+import { connect } from 'react-redux'; 
+import { excursiones } from '../redux/excursiones';
+
+const mapStateToProps = state => { 
+    return { 
+        excursiones: state.excursiones,
+        comentarios: state.comentarios 
+    } 
+}
 
 function RenderExcursion(props) {
 
@@ -78,8 +85,6 @@ class DetalleExcursion extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            excursiones: EXCURSIONES,
-            comentarios: COMENTARIOS,
             favoritos: []
         };
     }
@@ -95,16 +100,16 @@ class DetalleExcursion extends Component {
         return (
             <ScrollView>
                 <RenderExcursion
-                    excursion={this.state.excursiones[+excursionId]}
+                    excursion={this.props.excursiones.excursiones[+excursionId]}
                     favorita={this.state.favoritos.some(el => el === excursionId)}
                     onPress={() => this.marcarFavorito(excursionId)}
                 />
                 <RenderComentarios
-                    comentarios={this.state.comentarios.filter((comentario) => comentario.excursionId === excursionId)}
+                    comentarios={this.props.comentarios.comentarios.filter((comentario) => comentario.excursionId === excursionId)}
                 />
             </ScrollView>
         );
     }
 }
 
-export default DetalleExcursion;
+export default connect(mapStateToProps)(DetalleExcursion);
