@@ -5,25 +5,45 @@ import { Card, Icon } from '@rneui/themed';
 import { ListItem } from '@rneui/themed';
 import { baseUrl } from '../comun/comun';
 import { textoDetalleExcursion } from './EstilosComponentes';
-import { connect } from 'react-redux'; 
-import { excursiones } from '../redux/excursiones';
+import { connect } from 'react-redux';
+import { IndicadorActividad } from './IndicadorActividadComponent';
+import { postFavorito } from '../redux/ActionCreators';
 
-const mapStateToProps = state => { 
-    return { 
+const mapStateToProps = state => {
+    return {
         excursiones: state.excursiones,
-        comentarios: state.comentarios 
-    } 
+        comentarios: state.comentarios,
+        favoritos: state.favoritos
+    }
+}
+const mapDispatchToProps = dispatch => ({
+    postFavorito: (excursionId) => dispatch(postFavorito(excursionId))
+})
+
+function ProcesoCarga(props) {
+    if (props.isLoading) {
+        return (
+            <IndicadorActividad />
+        );
+    }
+    else if (props.errMess) {
+        return (
+            <View>
+                <Text>{props.errMess}</Text>
+            </View>
+        );
+    } else {
+        return (props.elemento);
+    }
 }
 
 function RenderExcursion(props) {
-
     const excursion = props.excursion;
-
     if (excursion != null) {
         return (
             <Card containerStyle={styles.container}>
                 <Card.Divider />
-                <Card.Image source={{uri: baseUrl + excursion.imagen}}
+                <Card.Image source={{ uri: baseUrl + excursion.imagen }}
                     style={styles.image}
                 >
                     <Card.Title style={textoDetalleExcursion.text}>{excursion.nombre}</Card.Title>
@@ -49,27 +69,27 @@ function RenderExcursion(props) {
 
 function RenderComentarios(props) {
     const comentarios = props.comentarios;
-if(comentarios!= null){
-    return (
-        <Card>
-            <Card.Title>Comentarios</Card.Title>
-            <Card.Divider />
-            {comentarios.map((item, index) => (
-                <ListItem key={index}>
-                    <ListItem.Content>
-                        <ListItem.Title>{item.autor}</ListItem.Title>
-                        <ListItem.Subtitle>{formatDate(item.dia)}</ListItem.Subtitle>
-                        <Text>{item.valoracion.toString()}/5</Text>
-                        <Text>{item.comentario}</Text>
-                    </ListItem.Content>
-                </ListItem>
-            ))}
-        </Card>
-    );
-        }
-        else {
-            return (<View/>);
-        }
+    if (comentarios != null) {
+        return (
+            <Card>
+                <Card.Title>Comentarios</Card.Title>
+                <Card.Divider />
+                {comentarios.map((item, index) => (
+                    <ListItem key={index}>
+                        <ListItem.Content>
+                            <ListItem.Title>{item.autor}</ListItem.Title>
+                            <ListItem.Subtitle>{formatDate(item.dia)}</ListItem.Subtitle>
+                            <Text>{item.valoracion.toString()}/5</Text>
+                            <Text>{item.comentario}</Text>
+                        </ListItem.Content>
+                    </ListItem>
+                ))}
+            </Card>
+        );
+    }
+    else {
+        return (<View />);
+    }
 }
 
 function formatDate(dateStr) {
@@ -82,34 +102,33 @@ function formatDate(dateStr) {
 }
 
 class DetalleExcursion extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            favoritos: []
-        };
-    }
     marcarFavorito(excursionId) {
-        this.setState({
-            favoritos: this.state.favoritos.concat(excursionId
-            )
-        });
+        this.props.postFavorito(excursionId);
     }
-
     render() {
         const { excursionId } = this.props.route.params;
         return (
             <ScrollView>
-                <RenderExcursion
-                    excursion={this.props.excursiones.excursiones[+excursionId]}
-                    favorita={this.state.favoritos.some(el => el === excursionId)}
-                    onPress={() => this.marcarFavorito(excursionId)}
+                <ProcesoCarga
+                    elemento={<RenderExcursion
+                        excursion={this.props.excursiones.excursiones[+excursionId]}
+                        favorita={this.props.favoritos.favoritos.some(el => el === excursionId)}
+                        onPress={() => this.marcarFavorito(excursionId)}
+                    />}
+                    isLoading={this.props.excursiones.isLoading}
+                    errMess={this.props.excursiones.errMess}
                 />
-                <RenderComentarios
-                    comentarios={this.props.comentarios.comentarios.filter((comentario) => comentario.excursionId === excursionId)}
+                <ProcesoCarga
+                    elemento={<RenderComentarios
+                        comentarios={this.props.comentarios.comentarios.filter((comentario) => comentario.excursionId === excursionId)}
+                    />}
+                    isLoading={this.props.comentarios.isLoading}
+                    errMess={this.props.comentarios.errMess}
                 />
+
             </ScrollView>
         );
     }
 }
 
-export default connect(mapStateToProps)(DetalleExcursion);
+export default connect(mapStateToProps, mapDispatchToProps)(DetalleExcursion);
