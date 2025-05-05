@@ -150,3 +150,15 @@ export const addFavorito = (excursionId) => ({
     type: ActionTypes.ADD_FAVORITO,
     payload: excursionId
 });
+export const postComentario = (excursionId, valoracion, autor, comentario) => (dispatch) => {
+    setTimeout(() => {
+        dispatch(addComentario(excursionId));
+    }, 2000);
+};
+export const addComentario = (excursionId) => ({
+    type: ActionTypes.ADD_COMENTARIO,
+    payload: excursionId,
+    valoracion: valoracion,
+    autor: autor,
+    comentario: comentario
+});

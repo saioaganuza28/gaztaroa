@@ -31,6 +31,33 @@ export const textoDetalleExcursion = StyleSheet.create({
     },
 });
 
+export const stylesModal = StyleSheet.create({
+    container: {
+        flex: 1,
+        padding: 40,
+        marginTop: 40,
+        backgroundColor: '#fff',
+    },
+    containerIcons: {
+        flex: 1,
+        flexDirection: 'row',
+        padding: 40,
+        backgroundColor: '#fff',
+        justifyContent: 'center'
+    },
+    inputText: {
+        color: '#000',
+        marginLeft: 15,
+        marginTop: 5
+    },
+    buttonText: {
+        color: '#007bff',
+        fontSize: 18,
+        textAlign: 'center',
+        marginVertical: 10,
+    }
+});
+
 export const stylesCampoBase = StyleSheet.create({
     container: {
         flex: 1,
