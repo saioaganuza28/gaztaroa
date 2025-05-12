@@ -1,6 +1,6 @@
 import React, { Component, useState } from 'react';
 import styles from './EstilosComponentes';
-import { Text, View, ScrollView, StyleSheet, TouchableOpacity, Modal } from 'react-native';
+import { Text, View, ScrollView, FlatList, TouchableOpacity, Modal } from 'react-native';
 import { Card, Icon, Input } from '@rneui/themed';
 import { ListItem } from '@rneui/themed';
 import { baseUrl } from '../comun/comun';
@@ -81,33 +81,6 @@ function RenderExcursion(props) {
     }
 }
 
-
-function RenderComentarios(props) {
-    const comentarios = props.comentarios;
-    if (comentarios != null) {
-        return (
-            <Card>
-                <Card.Title>Comentarios</Card.Title>
-                <Card.Divider />
-                {comentarios.map((item) => (
-                    <ListItem key={item.id.toString()}>
-                        <ListItem.Content>
-                            <ListItem.Title>{item.autor}</ListItem.Title>
-                            <ListItem.Subtitle>{formatDate(item.dia)}</ListItem.Subtitle>
-                            <Text>{item.valoracion.toString()}/5</Text>
-                            <Text>{item.comentario}</Text>
-                        </ListItem.Content>
-                    </ListItem>
-                ))}
-
-            </Card>
-        );
-    }
-    else {
-        return (<View />);
-    }
-}
-
 function formatDate(dateStr) {
     const date = new Date(dateStr.replace(/\s*:\s*/g, ':').replace(/(\.\d{3})\d+Z$/, '$1Z'));
     return date.toLocaleString('es-ES', {
@@ -127,6 +100,7 @@ class DetalleExcursion extends Component {
             showModal: false
         };
     }
+
     resetForm() {
         this.setState({
             valoracion: 5,
@@ -162,6 +136,21 @@ class DetalleExcursion extends Component {
 
     render() {
         const { excursionId } = this.props.route.params;
+        const RenderComentarios = ({ item, index }) => {
+            return (
+                <>
+                    <ListItem
+                        key={index}>
+                        <ListItem.Content>
+                            <ListItem.Title>{item.autor}</ListItem.Title>
+                            <ListItem.Subtitle>{formatDate(item.dia)}</ListItem.Subtitle>
+                            <Text>{item.valoracion.toString()}/5</Text>
+                            <Text>{item.comentario}</Text>
+                        </ListItem.Content>
+                    </ListItem>
+                </>
+            );
+        };
         return (
             <>
                 <Modal
@@ -214,9 +203,18 @@ class DetalleExcursion extends Component {
                         errMess={this.props.excursiones.errMess}
                     />
                     <ProcesoCarga
-                        elemento={<RenderComentarios
-                            comentarios={this.props.comentarios.comentarios.filter((comentario) => comentario.excursionId === excursionId)}
-                        />}
+                        elemento={
+                            <Card>
+                                <Card.Title>Comentarios</Card.Title>
+                                <Card.Divider />
+                                <FlatList
+                                    data={this.props.comentarios.comentarios.filter((comentario) => comentario.excursionId === excursionId)}
+                                    renderItem={RenderComentarios}
+                                    keyExtractor={item => item.id.toString()}
+                                    scrollEnabled={false}
+                                />
+                            </Card>
+                        }
                         isLoading={this.props.comentarios.isLoading}
                         errMess={this.props.comentarios.errMess}
                     />

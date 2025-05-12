@@ -21,11 +21,15 @@ class Calendario extends Component {
                     key={index}
                     onPress={() => navigate('DetalleExcursion', { excursionId: item.id })}
                     bottomDivider>
-                    <Avatar source={{ uri: baseUrl + item.imagen }} />
-                    <ListItem.Content>
-                        <ListItem.Title>{item.nombre}</ListItem.Title>
-                        <ListItem.Subtitle>{item.descripcion}</ListItem.Subtitle>
-                    </ListItem.Content>
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Avatar source={{ uri: baseUrl + item.imagen }} size="medium" />
+                        <ListItem.Content style={{ marginLeft: 20 }}>
+                            <ListItem.Title>{item.nombre}</ListItem.Title>
+                            <ListItem.Subtitle ellipsizeMode="tail">
+                                {item.descripcion}
+                            </ListItem.Subtitle>
+                        </ListItem.Content>
+                    </View>
                 </ListItem>
             );
         };
